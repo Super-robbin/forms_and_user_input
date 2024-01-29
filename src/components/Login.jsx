@@ -11,6 +11,8 @@ export default function Login() {
     e.preventDefault();
     const enteredEmail = email.current.value;
     const enteredPassword = password.current.value;
+
+    email.current.value = ''; // not recommended
   };
 
   return (
