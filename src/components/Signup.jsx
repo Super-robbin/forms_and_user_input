@@ -1,10 +1,14 @@
+import { useState } from "react";
+
 export default function Signup() {
+  const [passwordsAreNotEqual, setPasswordsAreNotEqual] = useState(false);
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
     const fd = new FormData(e.target);
-    const enteredEmail = fd.get('email')
-    
+    const enteredEmail = fd.get("email");
+
     // FormData is a built-in browser feature and is an object that makes it easy
     // to get hold of the different values entered into a form.
     // We simply pass the e.target because the target of that event is the form itself.
@@ -15,9 +19,17 @@ export default function Signup() {
     // Since the checkbox are grouped, they won't show inside the object,
     // therefore we first use fd.getAll('acquisition') and then data.acquisition
     // to attach them to our object.
-    const data = Object.fromEntries(fd.entries())
-    const acquisitionChannel = fd.getAll('acquisition')
+    const data = Object.fromEntries(fd.entries());
+    const acquisitionChannel = fd.getAll("acquisition");
     data.acquisition = acquisitionChannel;
+
+    // I have to access it like this data['confirm-password'] because with data.confirm-password
+    // the '-' will cause conflict and it won't work.
+
+    if (data.password !== data["confirm-password"]) {
+      setPasswordsAreNotEqual(true);
+      return;
+    }
 
     // To reset the form, we can either put type="reset" on the reset button or
     // we use the reset() built-in method to target the event like below.
@@ -31,13 +43,19 @@ export default function Signup() {
 
       <div className="control">
         <label htmlFor="email">Email</label>
-        <input id="email" type="email" name="email" />
+        <input id="email" type="email" name="email" required />
       </div>
 
       <div className="control-row">
         <div className="control">
           <label htmlFor="password">Password</label>
-          <input id="password" type="password" name="password" />
+          <input
+            id="password"
+            type="password"
+            name="password"
+            required
+            minLength={6}
+          />
         </div>
 
         <div className="control">
@@ -47,6 +65,9 @@ export default function Signup() {
             type="password"
             name="confirm-password"
           />
+          <div className="control-error">
+            {passwordsAreNotEqual && <p>Passwords must match.</p>}
+          </div>
         </div>
       </div>
 
@@ -55,18 +76,18 @@ export default function Signup() {
       <div className="control-row">
         <div className="control">
           <label htmlFor="first-name">First Name</label>
-          <input type="text" id="first-name" name="first-name" />
+          <input type="text" id="first-name" name="first-name" required />
         </div>
 
         <div className="control">
           <label htmlFor="last-name">Last Name</label>
-          <input type="text" id="last-name" name="last-name" />
+          <input type="text" id="last-name" name="last-name" required />
         </div>
       </div>
 
       <div className="control">
         <label htmlFor="phone">What best describes your role?</label>
-        <select id="role" name="role">
+        <select id="role" name="role" required>
           <option value="student">Student</option>
           <option value="teacher">Teacher</option>
           <option value="employee">Employee</option>
@@ -105,8 +126,13 @@ export default function Signup() {
 
       <div className="control">
         <label htmlFor="terms-and-conditions">
-          <input type="checkbox" id="terms-and-conditions" name="terms" />I
-          agree to the terms and conditions
+          <input
+            type="checkbox"
+            id="terms-and-conditions"
+            name="terms"
+            required
+          />
+          I agree to the terms and conditions
         </label>
       </div>
 
